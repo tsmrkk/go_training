@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"math"
 )
@@ -15,7 +14,7 @@ func Sqrt(x float64) (float64, error) {
 		res = math.Sqrt(x)
 		return res, err
 	}
-	err = errors.New(ErrNegativeSqrt(x).Error())
+	err = ErrNegativeSqrt(x)
 	return x, err
 }
 
