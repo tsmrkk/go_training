@@ -37,8 +37,8 @@ func crawl(url string, depth int, fetcher Fetcher, fetched map[string]bool) {
 	for _, u := range urls {
 		wg.Add(1)
 		go func(u string) {
-			defer wg.Done()
 			crawl(u, depth-1, fetcher, fetched)
+			defer wg.Done()
 		}(u)
 	}
 	wg.Wait()
