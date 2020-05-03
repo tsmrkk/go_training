@@ -9,43 +9,39 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
-type Checked struct {
-	urls []string
-	mux  sync.Mutex
+func Crawl() {
+	fetched := make(map[string]bool)
+	crawl("https://golang.org/", 4, fetcher, fetched)
+	return
 }
 
-var wg sync.WaitGroup
-
-func Crawl(url string, depth int, fetcher Fetcher, ch Checked) {
+func crawl(url string, depth int, fetcher Fetcher, fetched map[string]bool) {
 	if depth <= 0 {
 		return
 	}
 
+	if v, ok := fetched[url]; ok && v {
+		return
+	}
+
 	body, urls, err := fetcher.Fetch(url)
-	ch.urls = append(ch.urls, url)
+	fetched[url] = true
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Printf("found: %s %q\n", url, body)
+
+	var wg sync.WaitGroup
+
 	for _, u := range urls {
-		flag := -1
-		for _, v := range ch.urls {
-			if v == u {
-				flag = 1
-			}
-		}
-		if flag == -1 {
-			wg.Add(1)
-			ch.mux.Lock()
-			go func() {
-				Crawl(u, depth-1, fetcher, ch)
-				defer wg.Done()
-				defer ch.mux.Unlock()
-			}()
-		}
-		wg.Wait()
+		wg.Add(1)
+		go func(u string) {
+			defer wg.Done()
+			crawl(u, depth-1, fetcher, fetched)
+		}(u)
 	}
+	wg.Wait()
 	return
 }
 
@@ -97,6 +93,5 @@ var fetcher = fakeFetcher{
 }
 
 func main() {
-	ch := Checked{}
-	Crawl("https://golang.org/", 4, fetcher, ch)
+	Crawl()
 }
