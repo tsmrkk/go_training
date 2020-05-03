@@ -20,7 +20,7 @@ func crawl(url string, depth int, fetcher Fetcher, fetched map[string]bool) {
 		return
 	}
 
-	if v, ok := fetched[url]; ok && v {
+	if _, ok := fetched[url]; ok {
 		return
 	}
 
