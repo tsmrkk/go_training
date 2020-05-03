@@ -9,13 +9,7 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
-func Crawl() {
-	fetched := make(map[string]bool)
-	crawl("https://golang.org/", 4, fetcher, fetched)
-	return
-}
-
-func crawl(url string, depth int, fetcher Fetcher, fetched map[string]bool) {
+func Crawl(url string, depth int, fetcher Fetcher, fetched map[string]bool) {
 	if depth <= 0 {
 		return
 	}
@@ -37,7 +31,7 @@ func crawl(url string, depth int, fetcher Fetcher, fetched map[string]bool) {
 	for _, u := range urls {
 		wg.Add(1)
 		go func(u string) {
-			crawl(u, depth-1, fetcher, fetched)
+			Crawl(u, depth-1, fetcher, fetched)
 			defer wg.Done()
 		}(u)
 	}
@@ -93,5 +87,6 @@ var fetcher = fakeFetcher{
 }
 
 func main() {
-	Crawl()
+	fetched := make(map[string]bool)
+	Crawl("https://golang.org/", 4, fetcher, fetched)
 }
