@@ -2,9 +2,7 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"strings"
 
 	"golang.org/x/net/html"
 )
@@ -17,34 +15,24 @@ func main() {
 	}
 	defer resp.Body.Close()
 
-	byteArray, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		panic(err)
 	}
-	doc := html.NewTokenizer(strings.NewReader(string(byteArray)))
+	tokenizer := html.NewTokenizer(resp.Body)
 	for {
-		tt := doc.Next()
-		if tt == html.ErrorToken {
+		tokenType := tokenizer.Next()
+		if tokenType == html.ErrorToken {
 			return
 		}
-		// fmt.Println(tt.String())
-		tn, _ := doc.TagName()
-		if len(tn) == 1 && tn[0] == "title" {
-			fmt.Println(tt)
-			break
+		if tokenType == html.StartTagToken {
+			token := tokenizer.Token()
+			if "title" == token.Data {
+				tokenType = tokenizer.Next()
+				if tokenType == html.TextToken {
+					fmt.Println(tokenizer.Token().Data)
+					break
+				}
+			}
 		}
 	}
-	// fmt.Println(string(byteArray))
-
-	// var f func(*html.Node)
-	// f = func(n *html.Node) {
-	// 	if n.Type == html.ElementNode && n.Data == "title" {
-	// 		fmt.Println(n.Token())
-	// 	}
-	// 	for c := n.FirstChild; c != nil; c = c.NextSibling {
-	// 		f(c)
-	// 	}
-	// }
-
-	// f(doc)
 }
