@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sync"
 )
 
 type Fetcher interface {
@@ -9,18 +10,45 @@ type Fetcher interface {
 }
 
 func Crawl(url string, depth int, fetcher Fetcher, ch chan string) {
+	crawl(url, depth, fetcher, ch)
+}
+
+func isInclude(arr []string, url string) bool {
+	for _, v := range arr {
+		if v == url {
+			return true
+		}
+	}
+	return false
+}
+
+func crawl(url string, depth int, fetcher Fetcher, ch chan string) {
 	if depth <= 0 {
 		return
 	}
+	if isInclude(arr, url) {
+		return
+	}
+	fmt.Println("##################################")
+	ch <- url
+	// fmt.Println("ch", len(ch))
+	fmt.Println("##################################")
+	arr = append(arr, url)
 	body, urls, err := fetcher.Fetch(url)
 	if err != nil {
 		fmt.Println(err)
 		return
 	}
 	fmt.Printf("found: %s %q\n", url, body)
+	var wg sync.WaitGroup
 	for _, u := range urls {
-		Crawl(u, depth-1, fetcher, ch)
+		wg.Add(1)
+		go func(url string) {
+			crawl(url, depth-1, fetcher, ch)
+			defer wg.Done()
+		}(u)
 	}
+	wg.Wait()
 	return
 }
 
@@ -70,6 +98,8 @@ var fetcher = fakeFetcher{
 		},
 	},
 }
+
+var arr []string
 
 func main() {
 	ch := make(chan string)
