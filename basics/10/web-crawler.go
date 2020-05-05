@@ -8,7 +8,7 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
-func Crawl(url string, depth int, fetcher Fetcher) {
+func Crawl(url string, depth int, fetcher Fetcher, ch chan string) {
 	if depth <= 0 {
 		return
 	}
@@ -19,13 +19,9 @@ func Crawl(url string, depth int, fetcher Fetcher) {
 	}
 	fmt.Printf("found: %s %q\n", url, body)
 	for _, u := range urls {
-		Crawl(u, depth-1, fetcher)
+		Crawl(u, depth-1, fetcher, ch)
 	}
 	return
-}
-
-func main() {
-	Crawl("https://golang.org/", 4, fetcher)
 }
 
 type fakeFetcher map[string]*fakeResult
@@ -73,4 +69,9 @@ var fetcher = fakeFetcher{
 			"https://golang.org/pkg/",
 		},
 	},
+}
+
+func main() {
+	ch := make(chan string)
+	Crawl("https://golang.org/", 4, fetcher, ch)
 }
