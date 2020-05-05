@@ -9,10 +9,6 @@ type Fetcher interface {
 	Fetch(url string) (body string, urls []string, err error)
 }
 
-func Crawl(url string, depth int, fetcher Fetcher, ch chan string) {
-	crawl(url, depth, fetcher, ch)
-}
-
 func isInclude(arr []string, url string) bool {
 	for _, v := range arr {
 		if v == url {
@@ -22,17 +18,13 @@ func isInclude(arr []string, url string) bool {
 	return false
 }
 
-func crawl(url string, depth int, fetcher Fetcher, ch chan string) {
+func Crawl(url string, depth int, fetcher Fetcher, ch chan string) {
 	if depth <= 0 {
 		return
 	}
 	if isInclude(arr, url) {
 		return
 	}
-	fmt.Println("##################################")
-	ch <- url
-	// fmt.Println("ch", len(ch))
-	fmt.Println("##################################")
 	arr = append(arr, url)
 	body, urls, err := fetcher.Fetch(url)
 	if err != nil {
@@ -44,7 +36,7 @@ func crawl(url string, depth int, fetcher Fetcher, ch chan string) {
 	for _, u := range urls {
 		wg.Add(1)
 		go func(url string) {
-			crawl(url, depth-1, fetcher, ch)
+			Crawl(url, depth-1, fetcher, ch)
 			defer wg.Done()
 		}(u)
 	}
