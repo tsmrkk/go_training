@@ -34,3 +34,61 @@ Example: Output from Lexer
 What constitutes  a token varies between different lexer implementations. Some lexers, parse "5" to an integer in the parsing stage, while other lexers does not do that when constructing tokens
 
 ## 1.2 Defining Our Tokens
+
+Example input into Monkey language lexer
+
+```
+let five = 5;
+let ten = 10;
+
+let add = fn(x, y) {
+  x + y;
+};
+
+let result = add(five, ten);
+```
+
+Token data structure
+
+```
+package token
+type TokenType string
+type Token struct {
+  Type TokenType
+  Literal string
+}
+```
+
+Token Types
+
+```
+const (
+  ILLEGAL = "ILLEGAL"
+  EOF = "EOF"
+
+//identifiers + literals
+  IDENT = "IDENT" // add, foobar, x, y,...
+  INT = "INT" //123456
+
+//operators
+  ASSIGN = "="
+  PLUS = "+"
+
+//delimiters
+  COMMA = ","
+  SEMICOLON = ";"
+
+  LPAREN = "("
+  RPAREN = ")"
+  LBRACE = "{"
+  RBRACE = "}"
+
+//keywords
+  FUNCTION = "FUNCTION"
+  LET = "LET"
+
+
+    )
+
+```
+
