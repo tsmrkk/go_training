@@ -48,7 +48,7 @@ let add = fn(x, y) {
 let result = add(five, ten);
 ```
 
-Token data structure
+### Token data structure
 
 ```
 package token
@@ -59,7 +59,7 @@ type Token struct {
 }
 ```
 
-Token Types
+### Token Types
 
 ```
 const (
