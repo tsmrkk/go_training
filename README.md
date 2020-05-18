@@ -1,2 +1,2 @@
-# go-training
+# go_training
 goの学習用レポジトリ
