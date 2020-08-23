@@ -1,5 +1,5 @@
 # Goメモ
-## slice
+## Slice
 ### append
 By using append function, it is possible to add multiple values to a slice
 
@@ -17,6 +17,12 @@ s = append(s, 2, 3, 4)
 fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 // len=5 cap=6 [0 1 2 3 4]
 ```
+
+### length and capacity
+- sliceは参照型。capacityはsliceの最初から数えて、元となる配列の要素数。lengthはsliceの要素数を表す。
+- Goでは、容量オーバしたスライスに対して新しくメモリ領域を確保してコピーする。
+- sliceの値を変えるとベースとなっていた配列の値も書き換わるので注意
+
 ## Channel
 Closing channel is only necessary when the receiver must be told there are no more values coming, such as to terminate a range loop
 
