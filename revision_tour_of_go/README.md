@@ -1,5 +1,16 @@
 # Goメモ
 ## Slice
+A slice is a descriptor of an array segment. It consists of a pointer to the array, the length of the segment, and its capacity (the maximum length of the segment).
+
+### make
+When called, make allocates an array and returns a slice that refers to that array
+
+```
+var s []byte
+s = make([]byte, 5, 5)
+// s == []byte{0, 0, 0, 0, 0}
+```
+
 ### append
 By using append function, it is possible to add multiple values to a slice
 
