@@ -63,3 +63,9 @@ func main() {
 	fmt.Println(m["Bell Labs"])
 }
 ```
+
+## Channel
+Closing channel is only necessary when the receiver must be told there are no more values coming, such as to terminate a range loop
+
+## Interface
+functionは作ることできるけど、methodは作れない
