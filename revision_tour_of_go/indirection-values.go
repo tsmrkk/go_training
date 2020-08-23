@@ -30,7 +30,7 @@ func main() {
 
 	p := &Vertex{4, 3}
 	fmt.Println(p.Abs())
-	p.tryChangeValue()
+	// p.tryChangeValue()
 	// methodの場合はp.abs()を(*p).abs()とよしなに変換してくれる
 	// ただしp.tryChangeValue()だとp自体の値は変更できない
 	fmt.Println(*p)

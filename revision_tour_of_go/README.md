@@ -17,6 +17,49 @@ s = append(s, 2, 3, 4)
 fmt.Printf("len=%d cap=%d %v\n", len(s), cap(s), s)
 // len=5 cap=6 [0 1 2 3 4]
 ```
+## Channel
+Closing channel is only necessary when the receiver must be told there are no more values coming, such as to terminate a range loop
+
+## Interface
+interfaceを引数にしたfunctionは作ることできるけど、interfaceをレシーバーにしたmethodは作れない
+
+## Error
+When trying to output error to the console, go looks for Error method. Always implement Error method when creating a custom error
+
+```
+package main
+
+import (
+	"fmt"
+	"time"
+)
+
+type MyError struct {
+	When time.Time
+	What string
+}
+
+func (e *MyError) Error() string {
+	return fmt.Sprintf("at %v, %s",
+		e.When, e.What)
+}
+
+// returning error type
+func run() error {
+	return &MyError{
+		time.Now(),
+		"it didn't work",
+	}
+}
+
+func main() {
+	if err := run(); err != nil {
+		// when trying to output error to the console, go looks for Error method
+		// always implement Error method when creating a custom error
+		fmt.Println(err)
+	}
+}
+```
 
 ## 疑問点
 ### makeで初期化する場合とそうでない場合
@@ -64,8 +107,3 @@ func main() {
 }
 ```
 
-## Channel
-Closing channel is only necessary when the receiver must be told there are no more values coming, such as to terminate a range loop
-
-## Interface
-functionは作ることできるけど、methodは作れない
